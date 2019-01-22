@@ -48,18 +48,19 @@ class PUM_AssetCache {
 	 */
 	public static function init() {
 		if ( ! self::$initialized ) {
-			if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
-				$upload_dir = wp_upload_dir( null, false, false );
+			if ( ( defined( 'WPCOM_IS_VIP_ENV' ) && WPCOM_IS_VIP_ENV ) ) {
+				$create_dir = false;
 			} else {
-				$upload_dir = wp_upload_dir();
+				$create_dir = true;
 			}
+			$upload_dir = wp_upload_dir( null, $create_dir );
 			self::$cache_dir = trailingslashit( $upload_dir['basedir'] ) . 'pum';
 			self::$debug     = Popup_Maker::debug_mode() || ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG );
 			self::$suffix    = self::$debug ? '' : '.min';
 			self::$asset_url = Popup_Maker::$URL . 'assets/';
 			self::$js_url    = self::$asset_url . 'js/';
 			self::$css_url   = self::$asset_url . 'css/';
-			if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
+			if ( ( defined( 'WPCOM_IS_VIP_ENV' ) && WPCOM_IS_VIP_ENV ) ) {
 				self::$disabled = true;
 			} else {
 				self::$disabled  = pum_get_option( 'disable_asset_caching', false );

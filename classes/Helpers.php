@@ -54,11 +54,12 @@ class PUM_Helpers {
 	}
 
 	public static function upload_dir_url( $path = '' ) {
-		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
-			$upload_dir = wp_upload_dir( null, false, false );
+		if ( ( defined( 'WPCOM_IS_VIP_ENV' ) && WPCOM_IS_VIP_ENV ) ) {
+			$create_dir = false;
 		} else {
-			$upload_dir = wp_upload_dir();
+			$create_dir = true;
 		}
+		$upload_dir = wp_upload_dir( null, $create_dir );
 		$upload_dir = $upload_dir['baseurl'];
 		$upload_dir = preg_replace( '/^https?:/', '', $upload_dir );
 
