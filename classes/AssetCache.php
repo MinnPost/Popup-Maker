@@ -48,14 +48,22 @@ class PUM_AssetCache {
 	 */
 	public static function init() {
 		if ( ! self::$initialized ) {
-			$upload_dir      = wp_upload_dir();
+			if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
+				$upload_dir = wp_upload_dir( null, false, false );
+			} else {
+				$upload_dir = wp_upload_dir();
+			}
 			self::$cache_dir = trailingslashit( $upload_dir['basedir'] ) . 'pum';
 			self::$debug     = Popup_Maker::debug_mode() || ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG );
 			self::$suffix    = self::$debug ? '' : '.min';
 			self::$asset_url = Popup_Maker::$URL . 'assets/';
 			self::$js_url    = self::$asset_url . 'js/';
 			self::$css_url   = self::$asset_url . 'css/';
-			self::$disabled  = pum_get_option( 'disable_asset_caching', false );
+			if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
+				self::$disabled = true;
+			} else {
+				self::$disabled  = pum_get_option( 'disable_asset_caching', false );
+			}
 
 			add_action( 'pum_extension_updated', array( __CLASS__, 'reset_cache' ) );
 			add_action( 'pum_extension_deactivated', array( __CLASS__, 'reset_cache' ) );
